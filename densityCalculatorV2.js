@@ -6,8 +6,32 @@ let totalAdStats = {
   adsLoaded: 0, // Track the total number of ads loaded
 };
 
+function highlightAds(adElements) {
+  adElements.forEach(ad => {
+    const overlay = document.createElement('div');
+    overlay.style.position = 'absolute';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+    overlay.style.color = 'white';
+    overlay.style.fontSize = '12px';
+    overlay.style.fontWeight = 'bold';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.pointerEvents = 'none';
+    overlay.textContent = 'TRACKED AD';
+    overlay.style.zIndex = '9999';
+
+    ad.style.position = 'relative'; // Ensure the ad element has a relative position
+    ad.appendChild(overlay);
+  });
+}
+
 // Function to calculate the visible ad area and content area per viewport
-function calculateAdVisibilityOnScroll() {
+function calculateAdVisibilityOnScroll(debug = false) {
   // Select the ad units (GPT, Prebid, and Adnami)
   const normalAdSlots = Array.from(document.querySelectorAll('div[id^="google_ads_iframe"], div[id^="div-gpt-ad"]'));
   const adnamiAdSlots = Array.from(document.querySelectorAll('div[data-adnm-fid]'));
@@ -35,17 +59,15 @@ function calculateAdVisibilityOnScroll() {
     }
   });
 
-  // Total visible ad area for the current viewport
-  const totalAdArea = normalAdArea + adnamiAdArea;
+  // Highlight ads if debug mode is enabled
+  if (debug) {
+    highlightAds([...normalAdSlots, ...adnamiAdSlots]);
+  }
 
   // Update stats
   totalAdStats.normalAdArea += normalAdArea;
   totalAdStats.adnamiAdArea += adnamiAdArea;
-
-  // Add content area to the total (only for visible portions)
   totalAdStats.totalContentArea += window.innerHeight * window.innerWidth;
-
-  // Increase the number of scrolled viewports
   totalAdStats.viewportsScrolled++;
 }
 
@@ -107,14 +129,14 @@ function showResultsOverlay(adRatioPercent, contentRatioPercent, totalAdStats) {
 }
 
 // Function to scroll through the page and measure the ad density
-async function scrollAndMeasure(delay = 1500) {
+async function scrollAndMeasure(delay = 1500, debug = false) {
   let currentScroll = 0;
 
   while (currentScroll + window.innerHeight < document.body.scrollHeight) {
     window.scrollTo({ top: currentScroll, behavior: "smooth" });
 
     await new Promise((resolve) => setTimeout(resolve, delay));
-    calculateAdVisibilityOnScroll();
+    calculateAdVisibilityOnScroll(debug);
 
     currentScroll += window.innerHeight;
   }
@@ -122,37 +144,34 @@ async function scrollAndMeasure(delay = 1500) {
   // Ensure we hit the very bottom once more
   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   await new Promise((resolve) => setTimeout(resolve, delay));
-  calculateAdVisibilityOnScroll();
+  calculateAdVisibilityOnScroll(debug);
 
   // Count all ad slots loaded onto the page
   countAdSlots();
 
   // Final calculations for ad density per viewport
   const totalAdArea = totalAdStats.normalAdArea + totalAdStats.adnamiAdArea;
-  const totalContentArea = totalAdStats.totalContentArea; // Total area of all viewports scrolled
+  const totalContentArea = totalAdStats.totalContentArea;
   const finalAdDensityRatio = totalAdArea / totalContentArea;
 
   const adRatioPercent = (finalAdDensityRatio * 100).toFixed(1);
   const contentRatioPercent = (100 - adRatioPercent).toFixed(1);
 
   // Debugging logs
-  console.log("SN: === FINAL AD DENSITY REPORT ===");
-  console.log("SN: Total Viewports Scrolled:", totalAdStats.viewportsScrolled);
-  console.log("SN: Total Normal Ads Area:", Math.round(totalAdStats.normalAdArea), "px²");
-  console.log("SN: Total Adnami Ads Area:", Math.round(totalAdStats.adnamiAdArea), "px²");
-  console.log("SN: TOTAL Ad Area:", Math.round(totalAdArea), "px²");
-  console.log("SN: Total Content Area (Scrolled):", Math.round(totalContentArea), "px²");
-  console.log("SN: FINAL Ad Density Ratio:", finalAdDensityRatio.toFixed(3));
-  console.log(`SN: % of screen used for ads: ${adRatioPercent}%`);
-  console.log(`SN: % of screen used for ads: ${contentRatioPercent}%`);
-  console.log("SN: Total Ads Loaded:", totalAdStats.adsLoaded); // Log the total ads loaded
+  console.log("=== FINAL AD DENSITY REPORT ===");
+  console.log("Total Viewports Scrolled:", totalAdStats.viewportsScrolled);
+  console.log("Total Normal Ads Area:", Math.round(totalAdStats.normalAdArea), "px²");
+  console.log("Total Adnami Ads Area:", Math.round(totalAdStats.adnamiAdArea), "px²");
+  console.log("TOTAL Ad Area:", Math.round(totalAdArea), "px²");
+  console.log("Total Content Area (Scrolled):", Math.round(totalContentArea), "px²");
+  console.log("FINAL Ad Density Ratio:", finalAdDensityRatio.toFixed(3));
+  console.log(`% of screen used for ads: ${adRatioPercent}%`);
+  console.log(`% of screen used for content: ${contentRatioPercent}%`);
+  console.log("Total Ads Loaded:", totalAdStats.adsLoaded); // Log the total ads loaded
 
   // Show results in an overlay
   showResultsOverlay(adRatioPercent, contentRatioPercent, totalAdStats);
 }
 
-// Initialize tracking for rendered ad slots
-trackRenderedAdSlots();
-
 // Invoke the scrollAndMeasure function to start the process
-scrollAndMeasure();
+scrollAndMeasure(1500, true); // Pass `true` to enable debug mode
