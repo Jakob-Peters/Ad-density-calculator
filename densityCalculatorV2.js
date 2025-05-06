@@ -14,7 +14,7 @@ function highlightAds(adElements) {
     overlay.style.left = '0';
     overlay.style.width = '100%';
     overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+    overlay.style.backgroundColor = 'rgb(180, 0, 0)';
     overlay.style.color = 'white';
     overlay.style.fontSize = '12px';
     overlay.style.fontWeight = 'bold';
