@@ -1,6 +1,8 @@
 # 🧪 Ad Density Measurement Script
 
-> Developed by **Jakob Peters @ STEP Network**
+> Developed by **Jakob Peters @ STEP Network**  
+> It’s an **open source** project — contributions, suggestions, or improvements are **highly welcome**!  
+Feel free to fork the repo, open issues, or submit pull requests.
 
 This script helps you **measure the percentage of a web page’s visible area that is taken up by ads** — including standard ad formats (like Google Ad Manager and Prebid) and high-impact formats like **High-Impact skins, topscrolls, midscrolls etc**.
 
@@ -48,9 +50,6 @@ While this script gives a helpful estimation of ad density, please note the foll
 ## 📖 License
 
 This project is licensed under the **MIT License** — free for personal or commercial use.
-
-It’s an **open source** project — contributions, suggestions, or improvements are **highly welcome**!  
-Feel free to fork the repo, open issues, or submit pull requests.
   
 ---
   
