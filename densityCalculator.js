@@ -82,8 +82,8 @@ async function scrollAndMeasure(delay = 2000) {
   console.log("SN: TOTAL Ad Area:", Math.round(totalAdArea), "px²");
   console.log("SN: Total Content Area (Scrolled):", Math.round(totalContentArea), "px²");
   console.log("SN: FINAL Ad Density Ratio:", finalAdDensityRatio.toFixed(3));
-  console.log(`SN: % of screen real-estate used for ads: ${adRatioPercent}%`);
-  console.log(`SN: % for content: ${contentRatioPercent}%`);
+  console.log(`SN: % of screen used for ads: ${adRatioPercent}%`);
+  console.log(`SN: % of screen used for ads: ${contentRatioPercent}%`);
 }
 
 // Invoke the scrollAndMeasure function to start the process
