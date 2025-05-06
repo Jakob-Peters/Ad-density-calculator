@@ -7,7 +7,7 @@ It scrolls through the page, records how much of each viewport is covered by ads
 ## 🚀 Features
 
 - ✅ Automatically scrolls the full page
-- ✅ Tracks visible area of **standard ads** and **Adnami formats**
+- ✅ Tracks visible area of **standard ads** and **High-Impact formats**
 - ✅ Calculates **ad density ratio** (ad area ÷ total viewport area)
 - ✅ Logs total scrolled viewports, ad areas, and percentages
 
