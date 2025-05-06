@@ -1,10 +1,28 @@
 # 🧪 Ad Density Measurement Script
 
+> Developed by **Jakob Peters @ STEP Network**
+
 This script helps you **measure the percentage of a web page’s visible area that is taken up by ads** — including standard ad formats (like Google Ad Manager and Prebid) and high-impact formats like **High-Impact skins, topscrolls, midscrolls etc**.
 
 It scrolls through the page, records how much of each viewport is covered by ads, and reports total usage vs. content. This is useful for evaluating **ad clutter**, **user experience**, or compliance with advertising density standards.
 
+---
+
+## ⚠️ Limitations & Caveats
+
+While this script gives a helpful estimation of ad density, please note the following limitations:
+
+- **Sticky or Floating Ads**: Ads that remain fixed on the screen while scrolling (e.g., anchors, stickies) will be measured **multiple times**, possibly inflating the total ad area.
+- **Overlapping or Large Skins**: Some high-impact formats (like skins or out-of-iframe elements) may **extend outside their iframe/container**, leading to calculated ad area exceeding the actual viewport space.
+- **Viewport Overflow**: In edge cases, total ad area may exceed total scrolled content area, resulting in >100% ad density (e.g., `108% ads vs. -8% content`).
+- **No De-duplication**: The script does **not deduplicate overlapping ads**. If multiple ad containers occupy the same space (intentionally or accidentally), the areas will stack.
+- **Assumes Full Scroll Height**: The script scrolls in fixed `window.innerHeight` steps. If a sticky element pushes content up/down dynamically, some areas may be skipped or double-counted.
+- **Ad Selectors Are Opinionated**: Only specific ad selector patterns are targeted. Custom or non-standard ad setups may be missed.
+
+---
+  
 ## 🚀 Features
+
 
 - ✅ Automatically scrolls the full page
 - ✅ Tracks visible area of **standard ads** and **High-Impact formats**
@@ -26,11 +44,16 @@ It scrolls through the page, records how much of each viewport is covered by ads
 - **high-imapct Ads**:
   - `div[data-adnm-fid]`
 
+
 ## 📖 License
 
-MIT License — free for personal or commercial use.
+This project is licensed under the **MIT License** — free for personal or commercial use.
 
-
+It’s an **open source** project — contributions, suggestions, or improvements are **highly welcome**!  
+Feel free to fork the repo, open issues, or submit pull requests.
+  
+---
+  
 ## 📌 What It Does
 
 * Detects and measures ad slots on the page:
