@@ -48,8 +48,47 @@ function calculateAdVisibilityOnScroll() {
   totalAdStats.viewportsScrolled++;
 }
 
+// Function to create and display the results overlay
+function showResultsOverlay(adRatioPercent, contentRatioPercent, totalAdStats) {
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.top = '50%';
+  overlay.style.left = '50%';
+  overlay.style.width = '50%';
+  overlay.style.height = '50%';
+  overlay.style.transform = 'translate(-50%, -50%)';
+  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+  overlay.style.color = 'white';
+  overlay.style.zIndex = '9999';
+  overlay.style.display = 'flex';
+  overlay.style.flexDirection = 'column';
+  overlay.style.justifyContent = 'center';
+  overlay.style.alignItems = 'center';
+  overlay.style.padding = '20px';
+  overlay.style.boxSizing = 'border-box';
+
+  overlay.innerHTML = `
+    <h1 style="color: white;">Ad Density Report</h1>
+    <p>Total Viewports Scrolled: ${totalAdStats.viewportsScrolled}</p>
+    <p>Total Normal Ads Area: ${Math.round(totalAdStats.normalAdArea)} px²</p>
+    <p>Total Adnami Ads Area: ${Math.round(totalAdStats.adnamiAdArea)} px²</p>
+    <p>Total Ad Area: ${Math.round(totalAdStats.normalAdArea + totalAdStats.adnamiAdArea)} px²</p>
+    <p>Total Content Area (Scrolled): ${Math.round(totalAdStats.totalContentArea)} px²</p>
+    <p>Ad Density Ratio: ${(totalAdStats.normalAdArea + totalAdStats.adnamiAdArea) / totalAdStats.totalContentArea}</p>
+    <p>% of screen used for ads: ${adRatioPercent}%</p>
+    <p>% of screen used for content: ${contentRatioPercent}%</p>
+    <button id="closeOverlay" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer;">Close</button>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById('closeOverlay').addEventListener('click', () => {
+    document.body.removeChild(overlay);
+  });
+}
+
 // Function to scroll through the page and measure the ad density
-async function scrollAndMeasure(delay = 2000) {
+async function scrollAndMeasure(delay = 1500) {
   let currentScroll = 0;
 
   while (currentScroll + window.innerHeight < document.body.scrollHeight) {
@@ -84,6 +123,9 @@ async function scrollAndMeasure(delay = 2000) {
   console.log("SN: FINAL Ad Density Ratio:", finalAdDensityRatio.toFixed(3));
   console.log(`SN: % of screen used for ads: ${adRatioPercent}%`);
   console.log(`SN: % of screen used for ads: ${contentRatioPercent}%`);
+
+  // Show results in an overlay
+  showResultsOverlay(adRatioPercent, contentRatioPercent, totalAdStats);
 }
 
 // Invoke the scrollAndMeasure function to start the process
