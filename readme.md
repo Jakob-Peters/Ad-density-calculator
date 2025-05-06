@@ -25,18 +25,39 @@ While this script gives a helpful estimation of ad density, please note the foll
   
 ## 🚀 Features
 
-
 - ✅ Automatically scrolls the full page
 - ✅ Tracks visible area of **standard ads** and **High-Impact formats**
 - ✅ Calculates **ad density ratio** (ad area ÷ total viewport area)
 - ✅ Logs total scrolled viewports, ad areas, and percentages
+- ✅ **Debug Mode**: Highlights detected ads with a red overlay labeled "TRACKED AD"
 
 ## 📦 How to Use
 
 1. Open your browser DevTools (right-click > Inspect > Console tab).
 2. Paste the script into the console and press **Enter**.
 3. Wait for it to scroll through the page and log the final report.
+4. To enable **debug mode**, invoke the script with the `debug` parameter set to `true`:
+   ```javascript
+   scrollAndMeasure(1500, true);
+   ```
 
+## 🛠️ Debug Mode
+
+The script includes a **debug mode** that visually highlights all detected ads on the page. When enabled, each ad is overlaid with a **50% transparent red box** labeled `"TRACKED AD"`. This helps verify which elements are being detected as ads.
+
+### How to Enable Debug Mode
+
+To enable debug mode, pass `true` as the second parameter to the `scrollAndMeasure` function:
+
+```javascript
+scrollAndMeasure(1500, true);
+```
+
+### What Happens in Debug Mode
+
+- All detected ad elements are highlighted with a red overlay.
+- The overlay includes the text `"TRACKED AD"`.
+- This feature is useful for debugging and verifying ad detection accuracy.
 
 ## 📎 Selectors Used
 
@@ -46,12 +67,9 @@ While this script gives a helpful estimation of ad density, please note the foll
 - **high-imapct Ads**:
   - `div[data-adnm-fid]`
 
-
 ## 📖 License
 
 This project is licensed under the **MIT License** — free for personal or commercial use.
-  
----
   
 ## 📌 What It Does
 
@@ -66,8 +84,6 @@ This project is licensed under the **MIT License** — free for personal or comm
   * Accumulates the ad area over each step.
 * Calculates the total area of content shown (viewports × viewport size).
 * Logs a final **ad-to-content area ratio** when scrolling is complete.
-
----
 
 ## ⚙️ How the Script Works (Step-by-Step)
 
