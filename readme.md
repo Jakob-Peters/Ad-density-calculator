@@ -36,8 +36,14 @@ While this script gives a helpful estimation of ad density, please note the foll
 
 ## 📦 How to Use
 
+### Using Chrome Bookmarks
+1. Open the file [`bookmark_file.txt`](./bookmark_file.txt).
+2. Copy the full line for the desired mode (with or without debugging).
+3. Add it as a new bookmark in your browser's bookmark manager.
+
+### Using Chrome DevTools Console
 1. Open your browser DevTools (right-click > Inspect > Console tab).
-2. Paste the script into the console and press **Enter**.
+2. Paste the script [`densityCalculatorV2.js`](./densityCalculatorV2.js). into the console and press **Enter**.
 3. Wait for it to scroll through the page and log the final report.
 4. To enable **debug mode**, invoke the script with the `debug` parameter set to `true`:
    ```javascript
