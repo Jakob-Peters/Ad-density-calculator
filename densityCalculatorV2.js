@@ -19,11 +19,44 @@ function highlightAds(adElements) {
     overlay.style.fontSize = '12px';
     overlay.style.fontWeight = 'bold';
     overlay.style.display = 'flex';
+    overlay.style.flexDirection = 'column'; // Adjust for multiple lines
     overlay.style.justifyContent = 'center';
     overlay.style.alignItems = 'center';
     overlay.style.pointerEvents = 'none';
-    overlay.textContent = 'TRACKED AD';
     overlay.style.zIndex = '9999';
+
+    // Retrieve or generate a unique ID for the ad
+    if (!ad.dataset.adId) {
+      ad.dataset.adId = `ad-${Math.random().toString(36).substr(2, 9)}`;
+    }
+    const adId = ad.dataset.adId;
+
+    // Retrieve or calculate dimensions and area
+    const rect = ad.getBoundingClientRect();
+    if (!ad.dataset.width || !ad.dataset.height || !ad.dataset.area) {
+      const width = Math.max(0, Math.min(window.innerWidth, rect.right) - Math.max(0, rect.left));
+      const height = Math.max(0, Math.min(window.innerHeight, rect.bottom) - Math.max(0, rect.top));
+      const area = width * height;
+
+      // Store these values in the ad's dataset
+      ad.dataset.width = Math.round(width);
+      ad.dataset.height = Math.round(height);
+      ad.dataset.area = Math.round(area);
+    }
+
+    // Calculate the percentage of the ad's area relative to the screen size
+    const screenArea = window.innerWidth * window.innerHeight;
+    const adPercentage = ((ad.dataset.area / screenArea) * 100).toFixed(1);
+
+    // Add debug information to the overlay
+    overlay.innerHTML = `
+      <div>TRACKED AD</div>
+      <div>ID: ${adId}</div>
+      <div>Width: ${ad.dataset.width}px</div>
+      <div>Height: ${ad.dataset.height}px</div>
+      <div>Area: ${ad.dataset.area}px²</div>
+      <div>Screen Coverage: ${adPercentage}%</div>
+    `;
 
     ad.style.position = 'relative'; // Ensure the ad element has a relative position
     ad.appendChild(overlay);
@@ -46,6 +79,11 @@ function calculateAdVisibilityOnScroll(debug = false) {
       const visibleHeight = Math.max(0, Math.min(window.innerHeight, rect.bottom) - Math.max(0, rect.top));
       const visibleWidth = Math.max(0, Math.min(window.innerWidth, rect.right) - Math.max(0, rect.left));
       normalAdArea += visibleWidth * visibleHeight;
+
+      // Store dimensions and area in the ad's dataset
+      ad.dataset.width = Math.round(visibleWidth);
+      ad.dataset.height = Math.round(visibleHeight);
+      ad.dataset.area = Math.round(visibleWidth * visibleHeight);
     }
   });
 
@@ -56,6 +94,11 @@ function calculateAdVisibilityOnScroll(debug = false) {
       const visibleHeight = Math.max(0, Math.min(window.innerHeight, rect.bottom) - Math.max(0, rect.top));
       const visibleWidth = Math.max(0, Math.min(window.innerWidth, rect.right) - Math.max(0, rect.left));
       adnamiAdArea += visibleWidth * visibleHeight;
+
+      // Store dimensions and area in the ad's dataset
+      ad.dataset.width = Math.round(visibleWidth);
+      ad.dataset.height = Math.round(visibleHeight);
+      ad.dataset.area = Math.round(visibleWidth * visibleHeight);
     }
   });
 
@@ -81,6 +124,24 @@ function countAdSlots() {
   });
 }
 
+// Function to detect the device type
+function getDeviceType() {
+  const width = window.innerWidth;
+  if (width < 768) return "Mobile";
+  if (width < 1024) return "Tablet";
+  return "Desktop";
+}
+
+// Function to detect the browser type
+function getBrowserType() {
+  const userAgent = navigator.userAgent;
+  if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) return "Chrome";
+  if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) return "Safari";
+  if (userAgent.includes("Firefox")) return "Firefox";
+  if (userAgent.includes("Edg")) return "Edge";
+  return "Other";
+}
+
 // Function to create and display the results overlay
 function showResultsOverlay(adRatioPercent, contentRatioPercent, totalAdStats) {
   const overlay = document.createElement('div');
@@ -101,11 +162,17 @@ function showResultsOverlay(adRatioPercent, contentRatioPercent, totalAdStats) {
   // Apply responsive styles
   if (window.innerWidth < 728) {
     overlay.style.width = '100%'; // Mobile width
-    overlay.style.height = '60%'; // Mobile height
+    overlay.style.height = '70%'; // Mobile height
   } else {
-    overlay.style.width = '50%'; // Desktop width
-    overlay.style.height = '50%'; // Desktop height
+    overlay.style.width = '60%'; // Desktop width
+    overlay.style.height = '70%'; // Desktop height
   }
+
+  // Get device and browser information
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const deviceType = getDeviceType();
+  const browserType = getBrowserType();
 
   overlay.innerHTML = `
     <h1 style="color: white;">Ad Density Report</h1>
@@ -118,6 +185,10 @@ function showResultsOverlay(adRatioPercent, contentRatioPercent, totalAdStats) {
     <p>% of screen used for ads: ${adRatioPercent}%</p>
     <p>% of screen used for content: ${contentRatioPercent}%</p>
     <p>Total Ads Loaded: ${totalAdStats.adsLoaded}</p>
+    <h2 style="color: white; margin-top: 20px;">Device Information</h2>
+    <p>Viewport Size: ${viewportWidth}px x ${viewportHeight}px</p>
+    <p>Device Type: ${deviceType}</p>
+    <p>Browser Type: ${browserType}</p>
     <button id="closeOverlay" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer;">Close</button>
   `;
 
@@ -150,21 +221,21 @@ async function scrollAndMeasure(delay = 1500, debug = false) {
   countAdSlots();
 
   // Final calculations for ad density per viewport
-  const totalAdArea = totalAdStats.normalAdArea + totalAdStats.adnamiAdArea;
-  const totalContentArea = totalAdStats.totalContentArea;
-  const finalAdDensityRatio = totalAdArea / totalContentArea;
+  const totalAdArea = Math.round(totalAdStats.normalAdArea + totalAdStats.adnamiAdArea);
+  const totalContentArea = Math.round(totalAdStats.totalContentArea);
+  const finalAdDensityRatio = Math.round((totalAdArea / totalContentArea) * 100);
 
-  const adRatioPercent = (finalAdDensityRatio * 100).toFixed(1);
-  const contentRatioPercent = (100 - adRatioPercent).toFixed(1);
+  const adRatioPercent = finalAdDensityRatio;
+  const contentRatioPercent = 100 - adRatioPercent;
 
   // Debugging logs
   console.log("=== FINAL AD DENSITY REPORT ===");
   console.log("Total Viewports Scrolled:", totalAdStats.viewportsScrolled);
   console.log("Total Normal Ads Area:", Math.round(totalAdStats.normalAdArea), "px²");
   console.log("Total Adnami Ads Area:", Math.round(totalAdStats.adnamiAdArea), "px²");
-  console.log("TOTAL Ad Area:", Math.round(totalAdArea), "px²");
-  console.log("Total Content Area (Scrolled):", Math.round(totalContentArea), "px²");
-  console.log("FINAL Ad Density Ratio:", finalAdDensityRatio.toFixed(3));
+  console.log("TOTAL Ad Area:", totalAdArea, "px²");
+  console.log("Total Content Area (Scrolled):", totalContentArea, "px²");
+  console.log("FINAL Ad Density Ratio:", finalAdDensityRatio, "%");
   console.log(`% of screen used for ads: ${adRatioPercent}%`);
   console.log(`% of screen used for content: ${contentRatioPercent}%`);
   console.log("Total Ads Loaded:", totalAdStats.adsLoaded); // Log the total ads loaded
