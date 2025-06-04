@@ -6,10 +6,10 @@ Fork, open issues, or submit pull requests.
 
 This script measures **AdScore and user interference** on web pages. It supports standard ad formats (Google Ad Manager, Prebid) and high-impact formats (skins, topscrolls, etc). It scrolls through the page, records ad coverage, and provides a **modular, configurable AdScore system** (0–100, 100=best) based on:
 
-- Ad density
-- Unique ad units
-- Average content distance
-- Viewport coverage
+- Ad density *(enabled by default)*
+- Unique ad units *(module present, disabled by default)*
+- Average content distance *(module present, disabled by default)*
+- Viewport coverage *(module present, disabled by default)*
 
 A clean overlay UI displays the AdScore. **Debug info** is logged to the console (prefixed with `AdScore:`) if debug mode is enabled.
 
@@ -18,11 +18,12 @@ A clean overlay UI displays the AdScore. **Debug info** is logged to the console
 ## ⚡️ What’s New (v2)
 - **Modular, maintainable code**: Clear sections for config, state, measurement, scoring, UI, utilities, and main runner.
 - **Configurable AdScore system**: All weights and thresholds are set in a `CONFIG` object.
-- **Multiple scoring factors**: Ad density, unique ads, content distance, viewport coverage.
+- **Multiple scoring modules**: Ad density (enabled), unique ads, content distance, viewport coverage (all present, can be enabled/disabled in config).
 - **Clean overlay UI**: Only the AdScore and factor breakdown; debug info is in the console.
 - **Debug mode**: Visual overlays and detailed logs (see below).
 - **Easy to extend**: Add new scoring factors or change weights easily.
 - **Updated documentation**: This README reflects the new structure and usage.
+- **To-Do**: Add advanced features (center/content-aligned ad weighting, above-the-fold weighting, improved debug UI module).
 
 ---
 
@@ -30,7 +31,7 @@ A clean overlay UI displays the AdScore. **Debug info** is logged to the console
 - ✅ Scrolls the full page automatically
 - ✅ Tracks visible area of **standard** and **high-impact** ads
 - ✅ Calculates an **AdScore (user interference score)** (0–100, 100=best)
-- ✅ Modular AdScore: ad density, unique ads, content distance, viewport coverage
+- ✅ Modular AdScore: ad density (enabled), unique ads, content distance, viewport coverage (modules present, disabled by default)
 - ✅ **Configurable**: All weights and thresholds in one place
 - ✅ **Debug mode**: Visual overlays and detailed console logs
 - ✅ Clean, user-friendly overlay UI
@@ -60,6 +61,7 @@ A clean overlay UI displays the AdScore. **Debug info** is logged to the console
 - **Highlights all detected ads** with a red overlay labeled `TRACKED AD` (shows ID, size, area, % coverage).
 - **All debug info** (detailed stats, IDs, calculations) is logged to the console, prefixed with `AdScore:`.
 - **Overlay UI** remains clean; only a message about debug info is shown if debug mode is on.
+- **Debugging UI module**: *(planned, not yet implemented)*
 
 ---
 
@@ -67,8 +69,8 @@ A clean overlay UI displays the AdScore. **Debug info** is logged to the console
 - **CONFIG**: All weights, thresholds, and selectors
 - **STATE**: Tracks all measurement data
 - **MEASUREMENT**: Functions to collect ad data and highlight ads (in debug mode)
-- **SCORING**: Modular scoring functions for each factor
-- **UI/OVERLAY**: Clean overlay for the AdScore
+- **SCORING**: Modular scoring functions for each factor (ad density enabled, others present but disabled)
+- **UI/OVERLAY**: Clean overlay for the AdScore (scoring UI module); debugging UI module is a placeholder
 - **UTILITIES**: Device/browser detection, helpers
 - **MAIN**: The main runner function (`runAdScoreAudit`)
 
@@ -85,7 +87,7 @@ A clean overlay UI displays the AdScore. **Debug info** is logged to the console
 ## 📌 What It Does
 1. **Detects and Measures Ads**: Standard and high-impact units using the selectors above.
 2. **Scrolls Through the Page**: Viewport-by-viewport, measuring visible ad area at each step.
-3. **Calculates Modular AdScore**: For ad density, unique ads, content distance, and viewport coverage.
+3. **Calculates Modular AdScore**: For ad density (enabled), unique ads, content distance, and viewport coverage (modules present, disabled by default).
 4. **Displays Final Report**: 
    - **Overlay**: AdScore and factor breakdown
    - **Console**: Detailed debug info (if enabled)
@@ -139,6 +141,8 @@ AdScore: Total Ads Loaded: 15
 - **No De-duplication**: Overlapping ads stack their areas.
 - **Assumes Full Scroll Height**: Dynamic content may cause skips or double-counting.
 - **Selectors Are Opinionated**: Custom setups may be missed.
+- **Some modules are present but disabled by default**: Enable them in the `CONFIG` object to use.
+- **Debugging UI module is a planned feature**
 
 ---
 
