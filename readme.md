@@ -46,7 +46,7 @@ A clean overlay UI displays the AdScore. **Debug info** is logged to the console
 3. Wait for the script to scroll and analyze the page.
 4. To enable **debug mode**, run:
    ```javascript
-   runAdScoreAudit({ delay: 1500 });
+   runAdScoreAudit({ delay: 1500, debug: true });
    ```
    (Default: `debug: false`)
 
