@@ -1,0 +1,28 @@
+{
+  "name": "ad-density-calculator",
+  "version": "1.0.0",
+  "description": "> Developed by **Jakob Peters @ STEP Network**   > **Open source** — contributions, suggestions, or improvements are **highly welcome**!   Fork, open issues, or submit pull requests.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"No automated tests yet\" && exit 0",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
+    "build:devtools": "npm run build && node scripts/build-devtools.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jakob-Peters/Ad-density-calculator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Jakob-Peters/Ad-density-calculator/issues"
+  },
+  "homepage": "https://github.com/Jakob-Peters/Ad-density-calculator#readme",
+  "devDependencies": {
+    "esbuild": "^0.25.10",
+    "typescript": "^5.9.2"
+  }
+}
